@@ -1,0 +1,9 @@
+<schemalist>
+  <schema id="org.vala-apps.wpset.preferences" path="/org/vala-apps/wpset/preferences/">
+    <key name="images-dir" type="as">
+      <default>[ '/usr/share/backgrounds' ]</default>
+      <summary>Wallpaper directories</summary>
+      <description>List of directories with images to search</description>
+    </key>
+  </schema>
+</schemalist>

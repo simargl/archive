@@ -1,0 +1,39 @@
+<schemalist>
+  <schema id="org.vala-apps.pangea.preferences" path="/org/vala-apps/pangea/preferences/">
+    <key name="width" type="i">
+      <default>770</default>
+      <summary>Width</summary>
+      <description>Main window width</description>
+    </key>
+    <key name="height" type="i">
+      <default>540</default>
+      <summary>Heigth</summary>
+      <description>Main window heigth</description>
+    </key>
+    <key name="paned-pos" type="i">
+      <default>170</default>
+      <summary>Gtk.Paned position</summary>
+      <description>Gtk.Paned position between devices and bookmarks</description>
+    </key>
+    <key name="icon-size" type="i">
+      <default>48</default>
+      <summary>Icon size</summary>
+      <description>Icon size</description>
+    </key>
+    <key name="thumbnail-size" type="i">
+      <default>64</default>
+      <summary>Thumbnail size</summary>
+      <description>Thumbnail size</description>
+    </key>
+    <key name="saved-dir" type="s">
+      <default>''</default>
+      <summary>Saved directory from previous session</summary>
+      <description>Saved directory from previous session</description>
+    </key>
+    <key name="terminal" type="s">
+      <default>'system-terminal-emulator'</default>
+      <summary>Default terminal with command for starting directory</summary>
+      <description>Default terminal with command for starting directory</description>
+    </key> 
+  </schema>
+</schemalist>

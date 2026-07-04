@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=Desktop Wallpaper
+Comment=A simple tool for changing your desktop wallpaper
+Exec=wpset
+Icon=preferences-desktop-wallpaper
+Terminal=false
+Categories=Settings;
+MimeType=
+StartupNotify=true

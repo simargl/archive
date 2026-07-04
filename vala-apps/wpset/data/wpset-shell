@@ -1,0 +1,35 @@
+#!/bin/bash
+# 
+# Author: simargl <https://github.com/simargl>
+# License: GPL v3
+
+WALLPAPER=$(gsettings get org.gnome.desktop.background picture-uri | sed 's|file://||g' | cut -d "'" -f 2)
+
+wallpaper_set()
+{
+    if [ "$WALLPAPER" ]; then
+        echo "Wallpaper \"$WALLPAPER\""
+        imlibsetroot -s f "$WALLPAPER" 2>/dev/null
+        if [ "$(pidof conky)" ]; then 
+            killall conky; conky > /dev/null 2>&1 &
+        fi
+    fi
+}
+
+wallpaper_init()
+{
+    if [ "$WALLPAPER" ]; then
+        echo "Wallpaper \"$WALLPAPER\""
+        imlibsetroot -s f "$WALLPAPER"
+    fi
+}
+
+case "$1" in
+  
+  --init)
+    wallpaper_init ;;
+  
+  --set)
+    wallpaper_set ;;
+
+esac
