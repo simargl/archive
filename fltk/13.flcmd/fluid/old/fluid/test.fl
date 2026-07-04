@@ -1,0 +1,83 @@
+# data file for the Fltk User Interface Designer (fluid)
+version 1.0303 
+header_name {.h} 
+code_name {.cxx}
+Function {} {open
+} {
+  Fl_Window win {
+    label {FLTK Commander} open
+    xywh {406 315 775 610} type Double resizable size_range {700 410 0 0} visible
+  } {
+    Fl_File_Browser b1 {
+      callback b1_clicked selected
+      xywh {5 70 380 505} selection_color 72 labelfont 5 labelsize 20 labelcolor 32 textfont 5 textsize 15
+      code0 {b1->type(FL_MULTI_BROWSER);}
+    }
+    Fl_File_Browser b2 {
+      callback b2_clicked
+      xywh {390 70 380 505} selection_color 72 labelfont 5 labelsize 20 labelcolor 32 textfont 5 textsize 15
+      code0 {b2->type(FL_MULTI_BROWSER);}
+    }
+    Fl_Input i1 {
+      callback i1_changed
+      xywh {5 39 380 25} selection_color 219 labelcolor 32 when 8 textfont 5 textsize 15
+    }
+    Fl_Input i2 {
+      callback i2_changed
+      xywh {390 40 380 25} selection_color 219 labelcolor 32 when 8 textfont 5 textsize 15
+    }
+    Fl_Group {} {open
+      xywh {5 575 790 35}
+    } {
+      Fl_Button {} {
+        label {F3 View}
+        callback action_view
+        xywh {5 580 105 25} shortcut 0xffc0 color 52
+      }
+      Fl_Button {} {
+        label {F4 Edit}
+        callback action_edit
+        xywh {115 580 105 25} shortcut 0xffc1 color 52
+      }
+      Fl_Button {} {
+        label {F5 Copy}
+        callback action_copy
+        xywh {225 580 105 25} shortcut 0xffc2 color 52
+      }
+      Fl_Button {} {
+        label {F6 Move}
+        callback action_move
+        xywh {335 580 105 25} shortcut 0xffc3 color 52
+      }
+      Fl_Button {} {
+        label {F7 New Folder}
+        callback action_new_folder
+        xywh {445 580 105 25} shortcut 0xffc4 color 52
+      }
+      Fl_Button {} {
+        label {F8 Delete}
+        callback action_delete
+        xywh {555 580 105 25} shortcut 0xffc5 color 52
+      }
+      Fl_Button {} {
+        label {Alt+F4 Exit}
+        callback action_exit
+        xywh {665 580 105 25} color 52
+      }
+    }
+    Fl_Menu_Bar {} {open
+      xywh {5 7 765 25} box FLAT_BOX
+    } {
+      Submenu {} {
+        label File open
+        xywh {0 0 63 20} selection_color 219
+      } {
+        MenuItem {} {
+          label Exit
+          callback action_exit
+          xywh {0 0 31 20} selection_color 219
+        }
+      }
+    }
+  }
+} 

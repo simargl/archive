@@ -1,0 +1,98 @@
+# data file for the Fltk User Interface Designer (fluid)
+version 1.0303 
+header_name {.h} 
+code_name {.cxx}
+Function {} {open
+} {
+  Fl_Window window {
+    label {Control Center} open
+    xywh {519 142 545 405} type Double visible
+  } {
+    Fl_Menu_Bar {} {open
+      xywh {25 25 490 30} color 55 selection_color 70 labelsize 18
+    } {
+      Submenu {} {
+        label File open
+        xywh {0 0 63 20}
+      } {
+        MenuItem {} {
+          label Quit
+          xywh {0 0 31 20}
+        }
+      }
+      Submenu {} {
+        label Help open
+        xywh {0 0 63 20}
+      } {
+        MenuItem {} {
+          label Help
+          xywh {0 0 31 20}
+        }
+      }
+    }
+    Fl_Group {} {open
+      xywh {25 65 490 310}
+    } {
+      Fl_Button button11 {
+        label button selected
+        xywh {25 65 90 90} color 45 selection_color 28
+      }
+      Fl_Button button12 {
+        label button selected
+        xywh {125 65 90 90} color 45 selection_color 28
+      }
+      Fl_Button button13 {
+        label button selected
+        xywh {225 65 90 90} color 45 selection_color 28
+      }
+      Fl_Button button14 {
+        label button selected
+        xywh {325 65 90 90} color 45 selection_color 28
+      }
+      Fl_Button button15 {
+        label button selected
+        xywh {425 65 90 90} color 45 selection_color 28
+      }
+      Fl_Button button21 {
+        label button selected
+        xywh {25 165 90 90} color 45 selection_color 28
+      }
+      Fl_Button button22 {
+        label button selected
+        xywh {125 165 90 90} color 45 selection_color 28
+      }
+      Fl_Button button23 {
+        label button selected
+        xywh {225 165 90 90} color 45 selection_color 28
+      }
+      Fl_Button button24 {
+        label button selected
+        xywh {325 165 90 90} color 45 selection_color 28
+      }
+      Fl_Button button25 {
+        label button selected
+        xywh {425 165 90 90} color 45 selection_color 28
+      }
+      Fl_Button button31 {
+        label button selected
+        xywh {25 265 90 90} color 45 selection_color 28
+      }
+      Fl_Button button32 {
+        label button selected
+        xywh {125 265 90 90} color 45 selection_color 28
+      }
+      Fl_Button button33 {
+        label button selected
+        xywh {225 265 90 90} color 45 selection_color 28
+      }
+      Fl_Button button34 {
+        label button selected
+        xywh {325 265 90 90} color 45 selection_color 28
+      }
+      Fl_Button button35 {
+        label button selected
+        xywh {425 265 90 90} color 45 selection_color 28
+      }
+    }
+  }
+} 

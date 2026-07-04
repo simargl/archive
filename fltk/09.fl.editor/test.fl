@@ -1,0 +1,142 @@
+# data file for the Fltk User Interface Designer (fluid)
+version 1.0303 
+header_name {.h} 
+code_name {.cxx}
+decl {\#include <FL/Fl_Native_File_Chooser.H>} {private local
+} 
+
+decl {Fl_Native_File_Chooser *chooser;} {private local
+} 
+
+decl {Fl_Text_Buffer *textbuf;} {private local
+} 
+
+decl {const char *file;} {private local
+} 
+
+Function {open_file()} {open
+} {
+  code {textbuf->loadfile(file);
+
+const char* tmp = "opened ";
+char buffer[256];
+strncpy(buffer, tmp, sizeof(buffer));
+strncat(buffer, file, sizeof(buffer));
+
+main_window->label(buffer);} {}
+} 
+
+Function {save_file()} {} {
+  code {textbuf->savefile(file);
+  
+const char* tmp = "saved ";
+char buffer[256];
+strncpy(buffer, tmp, sizeof(buffer));
+strncat(buffer, file, sizeof(buffer));
+
+main_window->label(buffer);} {}
+} 
+
+Function {action_new()} {} {
+  code {file ="/tmp/untitled";
+textbuf->select(0, textbuf->length());
+textbuf->remove_selection();
+save_file();
+open_file();} {}
+} 
+
+Function {action_open()} {} {
+  code {chooser = new Fl_Native_File_Chooser();
+chooser->type(Fl_Native_File_Chooser::BROWSE_FILE);
+chooser->directory(file);
+if ( chooser->show() ) return;
+file = chooser->filename();
+open_file();} {}
+} 
+
+Function {action_save()} {} {
+  code {if (file != NULL) {
+  save_file();
+}} {}
+} 
+
+Function {action_save_as()} {} {
+  code {chooser = new Fl_Native_File_Chooser();
+chooser->type(Fl_Native_File_Chooser::BROWSE_SAVE_FILE);
+chooser->directory(file);
+chooser->preset_file(file);
+if ( chooser->show() ) return;
+file = chooser->filename();
+save_file();} {}
+} 
+
+Function {action_about()} {open
+} {
+  Fl_Window about_window {
+    label {About Dialog} user_data_type {Fl_Window*} open
+    xywh {403 479 335 290} type Double color 50 hide modal
+  } {
+    Fl_Box {} {
+      label {Emendo FLTK Experimental
+
+0.0.1
+Simple text editor
+Copyright © alphaOS}
+      xywh {0 9 335 187} labelsize 20
+    }
+    Fl_Box {} {
+      label {This program comes with ABSOLUTELY 
+NO WARRANTY. See the GNU General Public 
+License, version 3 or later for details.}
+      xywh {0 204 335 81}
+    }
+  }
+  code {about_window->show();} {}
+} 
+
+Function {action_about_hide()} {} {
+  code {about_window->hide();} {}
+} 
+
+Function {} {open
+} {
+  Fl_Window main_window {
+    label {Emendo FLTK Experimental} open
+    xywh {444 314 755 575} type Double color 50 resizable visible
+  } {
+    Fl_Text_Editor editor {selected
+      xywh {0 40 755 535} selection_color 220 labelfont 4 labelsize 17 textfont 4 textsize 17 resizable
+    }
+    Fl_Group {} {open
+      xywh {0 0 755 40} selection_color 93 labelcolor 32
+    } {
+      Fl_Button {} {
+        label New
+        callback action_new
+        xywh {5 5 75 30} color 50 selection_color 53 align 256
+      }
+      Fl_Button {} {
+        label Open
+        callback action_open
+        xywh {85 5 75 30} color 50 selection_color 53 align 256
+      }
+      Fl_Button {} {
+        label Save
+        callback action_save
+        xywh {165 5 75 30} color 50 selection_color 53 align 256
+      }
+      Fl_Button {} {
+        label {Save As}
+        callback action_save_as
+        xywh {245 5 75 30} color 50 selection_color 53 align 256
+      }
+      Fl_Button {} {
+        label About
+        callback action_about
+        xywh {675 5 75 30} color 50 selection_color 53 align 256
+      }
+    }
+  }
+  code {textbuf = new Fl_Text_Buffer();} {}
+  code {editor->buffer(textbuf);} {}
+} 

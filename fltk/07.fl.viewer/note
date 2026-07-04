@@ -1,0 +1,2 @@
+compile with:
+g++ `fltk-config --cxxflags` *.cxx `fltk-config --ldflags` -o test; ./test

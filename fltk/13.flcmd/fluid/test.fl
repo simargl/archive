@@ -1,0 +1,71 @@
+# data file for the Fltk User Interface Designer (fluid)
+version 1.0304
+header_name {.h}
+code_name {.cxx}
+Function {} {open
+} {
+  Fl_Window mainwin {
+    label {FLTK Commander} open
+    xywh {393 307 775 610} type Double color 50 resizable size_range {700 410 0 0} visible
+  } {
+    Fl_File_Browser browser1 {
+      xywh {5 70 380 505} selection_color 72 labelfont 5 labelsize 20 labelcolor 32 textfont 5 textsize 15
+      code0 {browser1->type(FL_MULTI_BROWSER);}
+    }
+    Fl_File_Browser browser2 {
+      xywh {390 70 380 505} selection_color 72 labelfont 5 labelsize 20 labelcolor 32 textfont 5 textsize 15
+      code0 {browser2->type(FL_MULTI_BROWSER);}
+    }
+    Fl_Input input1 {
+      xywh {5 39 380 25} selection_color 219 labelcolor 32 when 8 textfont 5 textsize 15
+    }
+    Fl_Input input2 {
+      xywh {390 40 380 25} selection_color 219 labelcolor 32 when 8 textfont 5 textsize 15
+    }
+    Fl_Group {} {open
+      xywh {5 575 790 35}
+    } {
+      Fl_Button button_view {
+        label {F3 View}
+        xywh {5 580 105 25} shortcut 0xffc0 color 52
+      }
+      Fl_Button button_edit {
+        label {F4 Edit}
+        xywh {115 580 105 25} shortcut 0xffc1 color 52
+      }
+      Fl_Button button_copy {
+        label {F5 Copy}
+        xywh {225 580 105 25} shortcut 0xffc2 color 52
+      }
+      Fl_Button button_move {
+        label {F6 Move}
+        xywh {335 580 105 25} shortcut 0xffc3 color 52
+      }
+      Fl_Button button_new_folder {
+        label {F7 New Folder}
+        xywh {445 580 105 25} shortcut 0xffc4 color 52
+      }
+      Fl_Button button_delete {
+        label {F8 Delete}
+        xywh {555 580 105 25} shortcut 0xffc5 color 52
+      }
+      Fl_Button button_exit {
+        label {Alt+F4 Exit}
+        xywh {665 580 105 25} shortcut 0xffe9 color 52
+      }
+    }
+    Fl_Menu_Bar {} {open selected
+      xywh {5 7 765 25} box FLAT_BOX color 50
+    } {
+      Submenu {} {
+        label File open
+        xywh {0 0 63 20} selection_color 219
+      } {
+        MenuItem menuitem_exit {
+          label Exit
+          xywh {0 0 31 20} selection_color 219
+        }
+      }
+    }
+  }
+}

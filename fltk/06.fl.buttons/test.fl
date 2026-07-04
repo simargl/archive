@@ -1,0 +1,86 @@
+# data file for the Fltk User Interface Designer (fluid)
+version 1.0303 
+header_name {.h} 
+code_name {.cxx}
+Function {action_about(Fl_Widget*, void*)} {open
+} {
+  Fl_Window about_window {
+    label {About Dialog} user_data_type {Fl_Window*} open
+    xywh {458 492 335 255} type Double hide modal
+  } {
+    Fl_Box {} {
+      label {FLTK Demo}
+      xywh {15 43 310 62} labelsize 45 labelcolor 64
+    }
+    Fl_Box {} {
+      label {Author: Anonymous}
+      xywh {55 163 230 57} labelcolor 64
+    }
+  }
+  code {about_window->show();} {}
+} 
+
+Function {action_quit(Fl_Widget*, void*)} {open
+} {
+  code {exit(0);} {}
+} 
+
+Function {button_cb(Fl_Widget*, const char* command)} {open
+} {
+  code {system(command);} {}
+} 
+
+Function {} {open
+} {
+  Fl_Window main_window {
+    label {FLTK Test} open
+    xywh {304 414 640 460} type Double hide resizable size_range {410 90 0 0}
+  } {
+    Fl_Button {} {
+      label Task
+      callback {button_cb(o, "lxtask&");} selected
+      xywh {15 50 300 50} color 92 selection_color 9 labelfont 8 labelsize 30
+    }
+    Fl_Button {} {
+      label Appearance
+      callback {button_cb(o, "lxappearance&");}
+      xywh {325 50 300 50} color 92 selection_color 9 labelfont 8 labelsize 30
+    }
+    Fl_Menu_Bar {} {open
+      xywh {0 10 640 30} color 48 selection_color 112 labelfont 4 labelcolor 32 textfont 4
+    } {
+      Submenu {} {
+        label File open
+        xywh {0 0 65 22} labelsize 16
+      } {
+        MenuItem {} {
+          label New
+          xywh {10 10 33 22} labelsize 15 labelcolor 32
+        }
+        MenuItem {} {
+          label Open
+          xywh {0 0 33 22} labelsize 15 labelcolor 32
+        }
+        MenuItem {} {
+          label Save
+          xywh {20 20 33 22} labelsize 15 labelcolor 32
+        }
+        MenuItem {} {
+          label Exit
+          callback action_quit
+          xywh {10 10 33 22} labelsize 15 labelcolor 32
+        }
+      }
+      Submenu {} {
+        label Help open
+        xywh {15 15 65 22} labelsize 16
+      } {
+        MenuItem {} {
+          label About user_data_type {Fl_Window*}
+          callback action_about
+          xywh {15 15 33 22} labelsize 15 labelcolor 32
+        }
+      }
+    }
+  }
+} 

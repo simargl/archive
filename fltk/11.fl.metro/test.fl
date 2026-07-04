@@ -1,0 +1,62 @@
+# data file for the Fltk User Interface Designer (fluid)
+version 1.0303 
+header_name {.h} 
+code_name {.cxx}
+Function {} {open
+} {
+  Fl_Window {} {open
+    xywh {657 360 555 330} type Double noborder visible
+  } {
+    Fl_Group {} {open
+      xywh {0 0 555 330} box FLAT_BOX color 55
+    } {
+      Fl_Group {} {open selected
+        xywh {4 4 548 324} box FLAT_BOX color 178
+      } {
+        Fl_Group {} {
+          label {WinMetro Settings
+_____________________________} open
+          xywh {90 71 380 18} color 55 labelsize 23 labelcolor 55 align 5
+        } {}
+        Fl_Box {} {
+          image {Windows-8-Logo.png} xywh {10 10 70 72}
+        }
+        Fl_Button {} {
+          callback {exit(0);}
+          image {icon_64x64.png} xywh {480 14 65 61} box NO_BOX
+        }
+        Fl_Box {} {
+          xywh {243 263 124 39} box FLAT_BOX color 55
+        }
+        Fl_Box {} {
+          xywh {398 263 124 39} box FLAT_BOX color 55
+        }
+        Fl_Button {} {
+          label OK
+          xywh {245 265 120 35} box FLAT_BOX down_box FLAT_BOX color 218 selection_color 178 labelcolor 55
+        }
+        Fl_Button {} {
+          label Cancel
+          callback {exit(0);}
+          xywh {400 265 120 35} box FLAT_BOX down_box FLAT_BOX color 218 selection_color 178 labelcolor 55
+        }
+      }
+      Fl_Group {} {open
+        xywh {15 115 525 130}
+      } {
+        Fl_Check_Button {} {
+          label {Run automatically at Windows startup}
+          xywh {40 140 350 15} down_box DOWN_BOX labelcolor 55
+        }
+        Fl_Check_Button {} {
+          label {Open Start desktop automatically}
+          xywh {40 170 350 15} down_box DOWN_BOX labelcolor 55
+        }
+        Fl_Check_Button {} {
+          label {Run the program in background when it is closed}
+          xywh {40 200 350 15} down_box DOWN_BOX labelcolor 55
+        }
+      }
+    }
+  }
+} 

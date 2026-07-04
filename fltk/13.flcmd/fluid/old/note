@@ -1,0 +1,2 @@
+compile with:
+g++ `fltk-config --cxxflags --use-images` main.cxx `fltk-config --ldflags --use-images` -o main;./main

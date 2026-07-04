@@ -1,0 +1,71 @@
+# data file for the Fltk User Interface Designer (fluid)
+version 1.0303 
+i18n_type 1 
+i18n_include <libintl.h> 
+i18n_function gettext 
+header_name {.h} 
+code_name {.cxx}
+Function {action_poweroff(Fl_Widget*, void*)} {open
+} {
+  code {system("wmpoweroff&");} {}
+} 
+
+Function {action_logout(Fl_Widget*, void*)} {open
+} {
+  code {system("killall X&");} {}
+} 
+
+Function {action_suspend(Fl_Widget*, void*)} {open
+} {
+  code {system("pm-suspend&");} {}
+} 
+
+Function {action_reboot(Fl_Widget*, void*)} {open
+} {
+  code {system("wmreboot&");} {}
+} 
+
+Function {action_quit(Fl_Widget*, void*)} {open
+} {
+  code {exit(0);} {}
+} 
+
+Function {} {open
+} {
+  Fl_Window main_window {
+    label {WM Logout} open
+    xywh {385 44 395 220} type Double align 80 visible
+  } {
+    Fl_Button {} {
+      label Poweroff
+      callback action_poweroff
+      image {gnome_session_logout.png} xywh {15 15 190 190} color 44 selection_color 41 labelsize 16
+    }
+    Fl_Group {} {open
+      xywh {230 15 150 100} selection_color 41 labelsize 16
+    } {
+      Fl_Button {} {
+        label Logout
+        callback action_logout
+        xywh {230 15 150 30} color 44 selection_color 41 labelsize 16
+      }
+      Fl_Button {} {
+        label Suspend
+        callback action_suspend
+        xywh {230 50 150 30} color 44 selection_color 41 labelsize 16
+      }
+      Fl_Button {} {
+        label Reboot
+        callback action_reboot
+        xywh {230 85 150 30} color 44 selection_color 41 labelsize 16
+      }
+    }
+    Fl_Button button_cancel {
+      label Cancel
+      callback action_quit
+      xywh {230 175 150 30} color 44 selection_color 41 labelsize 16
+    }
+  }
+  code {//Fl::focus(button_cancel);} {selected
+  }
+} 
