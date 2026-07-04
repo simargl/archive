@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=Gtk Appearance
+Comment=Utility for adjusting Gtk appearance
+Exec=gtk-appearance
+Icon=preferences-desktop-theme
+Terminal=false
+Categories=GTK;Settings;DesktopSettings
+StartupNotify=true

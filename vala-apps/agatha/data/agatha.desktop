@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=Agatha
+Comment=PDF Viewer in GTK3 and Poppler
+Exec=agatha %F
+Icon=evince
+Terminal=false
+Categories=Office;
+MimeType=application/pdf;application/x-bzpdf;application/x-gzpdf;application/x-xzpdf;application/x-ext-pdf
+StartupNotify=true

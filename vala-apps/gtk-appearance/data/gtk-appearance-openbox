@@ -1,0 +1,13 @@
+#!/bin/bash
+# 
+# Author: simargl <https://github.com/simargl>
+# License: GPL v3
+
+fn_openbox_theme()
+{
+    OT=$(grep -A 1 '<theme>' $HOME/.config/openbox/rc.xml | tail -1 | sed 's/    <name>//' | sed 's/<\/name>//')
+    sed "s|$OT|$@|" -i $HOME/.config/openbox/rc.xml
+    openbox --reconfigure
+}
+
+fn_openbox_theme "$@"
