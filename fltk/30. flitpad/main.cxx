@@ -1,4 +1,4 @@
-//g++ -std=c++11 test.cxx -o flitpad `fltk-config --cxxflags` `fltk-config --ldflags`
+/// Build (Linux with FLTK): g++ -std=c++11 main.cxx -o flitpad `fltk-config --cxxflags` `fltk-config --ldflags`
 
 #include <FL/Fl.H>
 #include <FL/Fl_Double_Window.H>
@@ -21,6 +21,8 @@
 #include <cstring>
 #include <cctype>
 #include <cstdio>
+#include <cstdlib>
+#include <cerrno>
 #include <algorithm>
 
 #include <sys/types.h>
@@ -291,7 +293,9 @@ private:
         int text_len = end - start;
         if (text_len <= 0) return;
 
-        std::string text = buf->text_range(start, end);
+        char* raw_text = buf->text_range(start, end);
+        std::string text = raw_text ? raw_text : "";
+        std::free(raw_text);
         std::string styles(text.length(), 'A'); 
 
         bool is_markup = false;
@@ -299,7 +303,7 @@ private:
             size_t dot = tab->filepath.find_last_of('.');
             if (dot != std::string::npos) {
                 std::string ext = tab->filepath.substr(dot + 1);
-                std::transform(ext.begin(), ext.end(), ext.begin(), ::tolower);
+                std::transform(ext.begin(), ext.end(), ext.begin(), [](unsigned char c) { return static_cast<char>(std::tolower(c)); });
                 if (ext == "xml" || ext == "svg" || ext == "html" || ext == "htm" || ext == "xhtml" || ext == "ui") {
                     is_markup = true;
                 }
@@ -356,7 +360,7 @@ private:
                 }
 
                 if (in_tag) {
-                    if (isspace(c)) {
+                    if (std::isspace(static_cast<unsigned char>(c))) {
                         styles[i] = 'A';
                     } else {
                         styles[i] = 'B'; 
@@ -431,17 +435,17 @@ private:
                     continue;
                 }
 
-                if (isdigit(c)) {
+                if (std::isdigit(static_cast<unsigned char>(c))) {
                     size_t start_n = i;
-                    while (i < text.length() && (isdigit(text[i]) || text[i] == '.')) i++;
+                    while (i < text.length() && (std::isdigit(static_cast<unsigned char>(text[i])) || text[i] == '.')) i++;
                     for (size_t j = start_n; j < i; ++j) styles[j] = 'E'; 
                     i--;
                     continue;
                 }
 
-                if (isalpha(c) || c == '_') {
+                if (std::isalpha(static_cast<unsigned char>(c)) || c == '_') {
                     size_t start_w = i;
-                    while (i < text.length() && (isalnum(text[i]) || text[i] == '_')) i++;
+                    while (i < text.length() && (std::isalnum(static_cast<unsigned char>(text[i])) || text[i] == '_')) i++;
                     std::string word = text.substr(start_w, i - start_w);
                     
                     if (word == "class" || word == "struct" || word == "int" || word == "void" || 
@@ -491,7 +495,7 @@ private:
         size_t dot = path.find_last_of('.');
         if (dot == std::string::npos) return "Plain Text";
         std::string ext = path.substr(dot + 1);
-        std::transform(ext.begin(), ext.end(), ext.begin(), ::tolower);
+        std::transform(ext.begin(), ext.end(), ext.begin(), [](unsigned char c) { return static_cast<char>(std::tolower(c)); });
 
         if (ext == "py") return "Python";
         if (ext == "cpp" || ext == "cc" || ext == "cxx" || ext == "hpp") return "C++";
@@ -689,38 +693,93 @@ public:
         }
     }
 
-    void load_session() {
-        std::string path = get_session_file_path();
-        std::ifstream file(path.c_str());
-        if (file.is_open()) {
-            std::string line;
-            std::string active_path;
-            if (std::getline(file, active_path)) {
-                if (!active_path.empty() && active_path.back() == '\r') active_path.pop_back();
+void load_session() {
+    std::string session_path = get_session_file_path();
+    std::ifstream file(session_path.c_str());
 
-                while (std::getline(file, line)) {
-                    if (!line.empty() && line.back() == '\r') line.pop_back();
-                    if (!line.empty()) {
-                        std::ifstream check(line.c_str());
-                        if (check.is_open()) {
-                            check.close();
-                            open_file(line);
-                        }
-                    }
-                }
-                if (!active_path.empty()) {
-                    for (auto tab : open_tabs_) {
-                        if (tab->filepath == active_path) {
-                            tabs_->value(tab->group);
-                            update_status_bar();
-                            break;
-                        }
-                    }
-                }
-            }
-            file.close();
+    if (!file.is_open()) return;
+
+    std::string active_path;
+    std::vector<std::string> session_paths;
+    std::string line;
+
+    if (std::getline(file, active_path)) {
+        if (!active_path.empty() && active_path.back() == '\r')
+            active_path.pop_back();
+
+        while (std::getline(file, line)) {
+            if (!line.empty() && line.back() == '\r')
+                line.pop_back();
+
+            if (!line.empty())
+                session_paths.push_back(get_absolute_path(line));
         }
     }
+
+    file.close();
+
+    active_path = active_path.empty()
+        ? ""
+        : get_absolute_path(active_path);
+
+    // Restore all files, remembering which ones actually opened.
+    std::vector<std::string> restored_paths;
+
+    for (const auto& path : session_paths) {
+        std::ifstream check(path.c_str(), std::ios::binary);
+        if (!check.is_open()) continue;
+        check.close();
+
+        open_file(path);
+
+        for (const auto* tab : open_tabs_) {
+            if (tab->filepath == path) {
+                restored_paths.push_back(path);
+                break;
+            }
+        }
+    }
+
+    // Restore the previously active file if it was successfully opened.
+    std::string target_path;
+
+    for (const auto& path : restored_paths) {
+        if (path == active_path) {
+            target_path = path;
+            break;
+        }
+    }
+
+    // If the active file is unavailable, use the first restored file.
+    if (target_path.empty() && !restored_paths.empty())
+        target_path = restored_paths.front();
+
+    if (!target_path.empty()) {
+        for (auto* tab : open_tabs_) {
+            if (tab->filepath == target_path) {
+                tabs_->value(tab->group);
+                break;
+            }
+        }
+
+        // IMPORTANT: Update the working directory and file browser.
+        size_t slash = target_path.find_last_of("/\\");
+
+        std::string dir;
+        if (slash == std::string::npos) {
+            dir = ".";
+        } else if (slash == 0) {
+            dir = target_path.substr(0, 1);
+        } else {
+            dir = target_path.substr(0, slash);
+        }
+
+        set_current_dir(dir);
+    }
+
+    update_status_bar();
+    redraw();
+}
 
     TabData* get_current_tab() {
         Fl_Widget* current_tab = tabs_->value();
@@ -778,6 +837,8 @@ public:
         editor->show_cursor();                 
         editor->selection_color(select_color);
 
+        // FLTK's style buffer must track the text buffer's length.
+        stylebuf->text(std::string(textbuf->length(), 'A').c_str());
         TabData* tab_data = new TabData{grp, editor, textbuf, stylebuf, candidate_path, candidate_name, true, tabs_};
 
         editor->highlight_data(stylebuf, style_table_, 5, 'A', 0, 0);
@@ -808,11 +869,13 @@ public:
         }
 
         std::ifstream file(abs_path.c_str(), std::ios::binary);
-        std::stringstream buffer_stream;
-        if (file.is_open()) {
-            buffer_stream << file.rdbuf();
-            file.close();
+        if (!file.is_open()) {
+            fl_alert("Could not open file:\\n%s", abs_path.c_str());
+            return;
         }
+        std::stringstream buffer_stream;
+        buffer_stream << file.rdbuf();
+        file.close();
 
         std::string file_content = buffer_stream.str();
         file_content.erase(std::remove(file_content.begin(), file_content.end(), '\r'), file_content.end());
@@ -846,6 +909,8 @@ public:
 
         textbuf->text(file_content.c_str());
 
+        // FLTK's style buffer must track the text buffer's length.
+        stylebuf->text(std::string(textbuf->length(), 'A').c_str());
         TabData* tab_data = new TabData{grp, editor, textbuf, stylebuf, abs_path, fname, false, tabs_};
 
         editor->highlight_data(stylebuf, style_table_, 5, 'A', 0, 0);
@@ -867,14 +932,17 @@ public:
         std::ofstream file(tab->filepath.c_str());
         if (file.is_open()) {
             char* text = tab->buffer->text();
-            file << text;
+            file << (text ? text : "");
             free(text);
             file.close();
-
+            if (!file) {
+                fl_alert("Error: Could not save file %s", tab->filepath.c_str());
+                return;
+            }
             tab->is_modified = false;
             update_tab_label(tab);
         } else {
-            fl_alert("Error: Could not save file %s", tab->filename.c_str());
+            fl_alert("Error: Could not save file %s", tab->filepath.c_str());
         }
     }
 
@@ -993,11 +1061,13 @@ public:
 
         int sel_start = 0, sel_end = 0;
         if (buf->selection_position(&sel_start, &sel_end)) {
-            std::string selected_text = buf->text_range(sel_start, sel_end);
+            char* raw_selected = buf->text_range(sel_start, sel_end);
+            std::string selected_text = raw_selected ? raw_selected : "";
+            std::free(raw_selected);
             bool matches = match_case ? (selected_text == query) : 
                 [](std::string a, std::string b) {
                     if (a.size() != b.size()) return false;
-                    for(size_t i=0; i<a.size(); ++i) if(tolower(a[i]) != tolower(b[i])) return false;
+                    for(size_t i=0; i<a.size(); ++i) if(std::tolower(static_cast<unsigned char>(a[i])) != std::tolower(static_cast<unsigned char>(b[i]))) return false;
                     return true;
                 }(selected_text, query);
             if (matches) {
@@ -1018,10 +1088,14 @@ public:
         int pos = 0;
         int count = 0;
         int found_pos = 0;
-        while (pos < buf->length() && buf->search_forward(pos, query.c_str(), &found_pos, match_case ? 1 : 0)) {
-            buf->replace(found_pos, found_pos + query.length(), replacement.c_str());
-            pos = found_pos + replacement.length();
-            count++;
+        while (pos <= buf->length() &&
+               buf->search_forward(pos, query.c_str(), &found_pos, match_case ? 1 : 0)) {
+            buf->replace(found_pos, found_pos + static_cast<int>(query.length()), replacement.c_str());
+            pos = found_pos + static_cast<int>(replacement.length());
+            // Empty replacements still make progress because the matched text was removed.
+            if (replacement.empty()) pos = found_pos;
+            ++count;
+            if (pos > buf->length()) break;
         }
         fl_message("Replaced %d occurrence(s).", count);
     }
