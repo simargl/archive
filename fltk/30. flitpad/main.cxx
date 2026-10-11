@@ -582,6 +582,11 @@ private:
         }
     }
 
+    static void window_close_cb(Fl_Widget*, void* data) {
+        TextEditorApp* app = static_cast<TextEditorApp*>(data);
+        app->try_quit();
+    }
+
 public:
     TextEditorApp(int width, int height, const char* title) 
         : Fl_Double_Window(width, height, title), find_dialog_(nullptr), replace_dialog_(nullptr) {
@@ -591,6 +596,10 @@ public:
         Fl_Color text_color = fl_rgb_color(171, 178, 191);  
 
         color(bg_color);
+        // Handle the window-manager close button through the same unsaved-changes
+        // confirmation path as Ctrl+Q. A custom callback prevents FLTK's default
+        // callback from hiding the window before the user answers.
+        callback(window_close_cb, this);
 
         char cwd[1024];
         if (fl_getcwd(cwd, sizeof(cwd))) {
@@ -928,7 +937,8 @@ void load_session() {
         redraw();
     }
 
-    void save_tab(TabData* tab) {
+    bool save_tab(TabData* tab) {
+        if (!tab) return true;
         std::ofstream file(tab->filepath.c_str());
         if (file.is_open()) {
             char* text = tab->buffer->text();
@@ -937,12 +947,14 @@ void load_session() {
             file.close();
             if (!file) {
                 fl_alert("Error: Could not save file %s", tab->filepath.c_str());
-                return;
+                return false;
             }
             tab->is_modified = false;
             update_tab_label(tab);
+            return true;
         } else {
             fl_alert("Error: Could not save file %s", tab->filepath.c_str());
+            return false;
         }
     }
 
@@ -960,8 +972,8 @@ void load_session() {
                 TabData* tab = *it;
                 if (tab->is_modified) {
                     int choice = fl_choice("File %s has unsaved changes.", "Cancel", "Save", "Close Without Saving", tab->filename.c_str());
-                    if (choice == 0) return; 
-                    if (choice == 1) save_tab(tab); 
+                    if (choice == 0) return;
+                    if (choice == 1 && !save_tab(tab)) return;
                 }
 
                 tabs_->remove(tab->group);
@@ -982,8 +994,8 @@ void load_session() {
             if (tab->is_modified) {
                 tabs_->value(tab->group);
                 int choice = fl_choice("File %s has unsaved changes. Save before exiting?", "Cancel", "Save", "Don't Save", tab->filename.c_str());
-                if (choice == 0) return; 
-                if (choice == 1) save_tab(tab); 
+                if (choice == 0) return;
+                if (choice == 1 && !save_tab(tab)) return;
             }
         }
         hide();
@@ -1101,10 +1113,6 @@ void load_session() {
     }
 
     int handle(int event) override {
-        if (event == FL_CLOSE) {
-            try_quit();
-            return 1;
-        }
         if (event == FL_KEYBOARD || event == FL_PUSH || event == FL_DRAG || event == FL_RELEASE) {
             update_status_bar();
             
